@@ -1,127 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ronald M. Schernikau</title>
-</head>
-<style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Big Scroll Menu</title>
+  <style>
     @font-face {
-        font-family: NeueBrucke;
-        src: url(NeueBrucke.ttf);
+      font-family: NeueBrucke;
+      src: url(NeueBrucke.ttf);
     }
-    * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  background-image: url(matrosenintro.gif);
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-}
-
-.menu {
-  margin: 1rem;
-  cursor: pointer;
-  width: calc(100vw - 2rem);
-}
-
-
-.menu-icon {
-  width: 2.5rem;
-  height: 2.5rem;
-  background-color: #FFFDF7;
-  background-image: url(burger.svg);
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 85%;    
-}
-
-.menu-icon.open {
-  transition: background-image .2s;
-  background-image: url(book.svg);
-}
-
-/* DROPDOWN */
-.dropdown {
-  list-style: none;
-  background-color: #FFFDF7;
-  overflow: hidden;
-  max-height: 0;                         
-  opacity: 0;
-  transition: max-height 0.4s ease, opacity 0.3s ease;
-}
-
-.dropdown.open {
-  max-height: 20rem;                     
-  opacity: 1;
-}
-
-
-li {
-  font-family: NeueBrucke;
-  padding: 0.5rem 2rem;
-  text-align: center;
-  font-size: 1.1rem;
-  border-bottom: dotted #16161d 1px;
-}
-
-@keyframes slideFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.dropdown li {
-  opacity: 0;
-  transform: translateY(-10px);
-}
-
-
-.dropdown.open li {
-  animation: slideFadeIn 0.3s ease forwards;
-}
-
-
-.dropdown.open li:nth-child(1) { animation-delay: 0.05s; }
-.dropdown.open li:nth-child(2) { animation-delay: 0.10s; }
-.dropdown.open li:nth-child(3) { animation-delay: 0.15s; }
-.dropdown.open li:nth-child(4) { animation-delay: 0.20s; }
-
-
-
-</style>
+    .scroll-menu {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow-y: scroll;
+      scroll-snap-type: y mandatory;
+      color: #FFFDF7;
+      background-image: url(matrosenintro.gif);
+    }
+    .scroll-menu ul {
+      list-style: none;
+      margin: 0;
+      padding: 0 0 0 1rem;
+    }
+    .scroll-menu li {
+      scroll-snap-align: start;
+      height: 10vh;             
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      font-family: NeueBrucke, sans-serif;
+      font-size: 8vw;           
+      line-height: 1;
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+    .scroll-menu li:hover {
+      color: #a29bfe;
+    }
+    .scroll-menu li.active {
+      color: #ff7675;
+    }
+  </style>
+</head>
 <body>
-    <header>
-        <div class="menu">
-            <div class="menu-icon">
-            </div>
-            <ul class="dropdown">
-                <li>biografie</li>
-                <li>blicke</li>
-                <li>rms revisited</li>
-                <li>essays</li>
-            </ul>
-        </div>
-    </header>
 
-     <script>
-    const menuBtn = document.querySelector('.menu-icon');
-    const dropdown = document.querySelector('.dropdown');
-    const menu = document.querySelector(".menu-icon");
+  <nav class="scroll-menu" id="menu">
+    <ul>
+      <li data-slug="startseite">startseite</li>
+      <li data-slug="biografie">biografie</li>
+      <li data-slug="rms-revisited">rms revisited</li>
+      <li data-slug="blicke">blicke</li>
+      <li data-slug="postkarten">postkarten</li>
+      <li data-slug="kleinstadtnovelle">kleinstadtnovelle</li>
+      <li data-slug="die-tage-in-l">die tage in l.</li>
+      <li data-slug="legende">legende</li>
+      <li data-slug="koenigin-im-dreck">königin im dreck</li>
+      <li data-slug="binz-befragung">binz. befragung</li>
+      <li data-slug="so-schoen">so schön</li>
+      <li data-slug="lyrik">lyrik</li>
+      <li data-slug="essays">essays</li>
+      <li data-slug="bibliografie">bibliografie</li>
+      <li data-slug="hoeren-sehen">hören & sehen</li>
+      <li data-slug="aktuell-blog">aktuell & blog</li>
+      <li data-slug="newsletter">newsletter</li>
+      <li data-slug="links">links</li>
+      <li data-slug="credits-impressum">credits & impressum</li>
+    </ul>
+  </nav>
 
-    menuBtn.addEventListener('click', () => {
-      dropdown.classList.toggle('open');
-      menu.classList.toggle('open');
+  <script>
+    const menu = document.getElementById('menu');
+    const items = Array.from(menu.querySelectorAll('li'));
+
+    menu.addEventListener('scroll', () => {
+      const center = window.innerHeight / 2;
+      let closest = null, dist = Infinity;
+      items.forEach(li => {
+        const rect = li.getBoundingClientRect();
+        const d = Math.abs(rect.top + rect.height/2 - center);
+        if (d < dist) {
+          dist = d;
+          closest = li;
+        }
+      });
+      items.forEach(li => li.classList.remove('active'));
+      if (closest) closest.classList.add('active');
+    });
+
+    items.forEach(li => {
+      li.addEventListener('click', () => {
+        li.scrollIntoView({ behavior: 'smooth' });
+      });
     });
   </script>
+
 </body>
 </html>
