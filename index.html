@@ -11,57 +11,98 @@
         src: url(NeueBrucke.ttf);
     }
     * {
-        margin: 0;
-        padding: 0;
-    }
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-    body {
-        box-sizing: border-box;
-        background-image: url(matrosenintro.gif);
-        display: flex;
-        align-items: flex-start;
-        justify-content: flex-start;
-    }
+body {
+  background-image: url(matrosenintro.gif);
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
 
-    .menu {
-    margin: 1rem 0 0 1rem;
-    cursor: pointer;
-    }
+.menu {
+  margin: 1rem;
+  cursor: pointer;
+  width: calc(100vw - 2rem);
+}
 
-    .menu-icon {
-        width: 2.5rem;
-        height: 2.5rem;
-           display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: #FFFDF7;
-    }
 
-    .dropdown {
-       background-color: #FFFDF7; 
-       list-style: none;
-       margin: 0;
-       padding: 0;
-       display: none;
-    }
+.menu-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  background-color: #FFFDF7;
+  background-image: url(burger.svg);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 85%;    
+}
 
-    .dropdown.open {
-        display: block;
-    }
+.menu-icon.open {
+  transition: background-image .2s;
+  background-image: url(book.svg);
+}
 
-    li {
-        border-bottom: dotted #16161d 1px;
-        font-family: NeueBrucke;
-        padding: .3rem 2rem;
-        text-align: center;
-        font-size: 1.1rem;
-    }
+/* DROPDOWN */
+.dropdown {
+  list-style: none;
+  background-color: #FFFDF7;
+  overflow: hidden;
+  max-height: 0;                         
+  opacity: 0;
+  transition: max-height 0.4s ease, opacity 0.3s ease;
+}
+
+.dropdown.open {
+  max-height: 20rem;                     
+  opacity: 1;
+}
+
+
+li {
+  font-family: NeueBrucke;
+  padding: 0.5rem 2rem;
+  text-align: center;
+  font-size: 1.1rem;
+  border-bottom: dotted #16161d 1px;
+}
+
+@keyframes slideFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdown li {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+
+.dropdown.open li {
+  animation: slideFadeIn 0.3s ease forwards;
+}
+
+
+.dropdown.open li:nth-child(1) { animation-delay: 0.05s; }
+.dropdown.open li:nth-child(2) { animation-delay: 0.10s; }
+.dropdown.open li:nth-child(3) { animation-delay: 0.15s; }
+.dropdown.open li:nth-child(4) { animation-delay: 0.20s; }
+
+
+
 </style>
 <body>
     <header>
         <div class="menu">
             <div class="menu-icon">
-                 <img src="menu.svg">
             </div>
             <ul class="dropdown">
                 <li>biografie</li>
@@ -75,9 +116,11 @@
      <script>
     const menuBtn = document.querySelector('.menu-icon');
     const dropdown = document.querySelector('.dropdown');
+    const menu = document.querySelector(".menu-icon");
 
     menuBtn.addEventListener('click', () => {
       dropdown.classList.toggle('open');
+      menu.classList.toggle('open');
     });
   </script>
 </body>
