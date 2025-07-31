@@ -10,9 +10,11 @@
       src: url(NeueBrucke.ttf);
     }
 
+   
+
     body {
 background-image: url(matrosenintro.gif);
-    }
+    } 
     .scroll-menu {
       position: fixed;
       top: 0; left: 0;
@@ -21,35 +23,72 @@ background-image: url(matrosenintro.gif);
       overflow-y: scroll;
       scroll-snap-type: y mandatory;
       color: #FFFDF7;
-      
+      z-index: 100;
+      transition: none; /* no need to animate menu itself */
+    }
+    .scroll-menu.locked {
+
+      overflow-y: hidden;
     }
     .scroll-menu ul {
       list-style: none;
       margin: 0;
       padding: 0 0 0 1rem;
     }
+
     .scroll-menu li {
       scroll-snap-align: start;
-      height: 10vh;             
+      height: 10vh;
       display: flex;
       align-items: center;
       justify-content: flex-start;
       font-family: NeueBrucke, sans-serif;
-      font-size: 12vw;           
+      font-size: 12vw;
       line-height: 1;
       cursor: pointer;
-      transition: color 0.2s ease;
+      transition: transform 0.5s ease, opacity 0.5s ease;
     }
     .scroll-menu li:hover {
       color: #a29bfe;
     }
     .scroll-menu li.active {
       color: #ff7675;
+      transform: none;
+    }
+    .scroll-menu li.hide {
+      opacity: 0;
+      transform: translateY(100%);
+      pointer-events: none;
+    }
+
+    .burger {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      font-size: 12vw;
+      background: none;
+      border: none;
+      color: #FFFDF7;
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 101;
+      font-family: NeueBrucke;
+    }
+    .burger.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    #content section {
+      height: 100vh;
+      padding: 2rem;
     }
   </style>
 </head>
 <body>
-
+  <!-- <div class="book"></div> -->
+  <button id="burger" class="burger">☰</button>
   <nav class="scroll-menu" id="menu">
     <ul>
       <li data-slug="startseite">startseite</li>
@@ -74,20 +113,24 @@ background-image: url(matrosenintro.gif);
     </ul>
   </nav>
 
+  <!-- <main id="content">
+    <section id="startseite"><h1>Startseite</h1></section>
+    <section id="biografie"><h1>Biografie</h1></section>
+    <section id="rms-revisited"><h1>RMS Revisited</h1></section>
+  </main> -->
+
   <script>
-    const menu = document.getElementById('menu');
-    const items = Array.from(menu.querySelectorAll('li'));
+    const menu   = document.getElementById('menu');
+    const items  = Array.from(menu.querySelectorAll('li'));
+    const burger = document.getElementById('burger');
 
     menu.addEventListener('scroll', () => {
       const center = window.innerHeight / 2;
       let closest = null, dist = Infinity;
       items.forEach(li => {
-        const rect = li.getBoundingClientRect();
-        const d = Math.abs(rect.top + rect.height/2 - center);
-        if (d < dist) {
-          dist = d;
-          closest = li;
-        }
+        const r = li.getBoundingClientRect();
+        const d = Math.abs((r.top + r.height/2) - center);
+        if (d < dist) { dist = d; closest = li; }
       });
       items.forEach(li => li.classList.remove('active'));
       if (closest) closest.classList.add('active');
@@ -95,8 +138,20 @@ background-image: url(matrosenintro.gif);
 
     items.forEach(li => {
       li.addEventListener('click', () => {
-        li.scrollIntoView({ behavior: 'smooth' });
+        items.forEach(i => {
+          i.classList.toggle('active', i === li);
+          i.classList.toggle('hide',   i !== li);
+        });
+        burger.classList.add('show');
+        document.getElementById(li.dataset.slug)
+                .scrollIntoView({ behavior: 'smooth' });
       });
+    });
+
+    burger.addEventListener('click', () => {
+      items.forEach(i => i.classList.remove('hide','active'));
+      burger.classList.remove('show');
+      menu.scrollTo({ top: 0, behavior: 'smooth' });
     });
   </script>
 
