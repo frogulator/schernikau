@@ -11,9 +11,8 @@
     }
 
     body {
-      background-image: url(matrosenintro.gif);
+background-image: url(matrosenintro.gif);
     }
-
     .scroll-menu {
       position: fixed;
       top: 0; left: 0;
@@ -36,7 +35,7 @@
       align-items: center;
       justify-content: flex-start;
       font-family: NeueBrucke, sans-serif;
-      font-size: 11vw;           
+      font-size: 12vw;           
       line-height: 1;
       cursor: pointer;
       transition: color 0.2s ease;
@@ -47,29 +46,16 @@
     .scroll-menu li.active {
       color: #ff7675;
     }
-
-    a {
-  text-decoration: none;   
-  color: inherit;          
-  outline: none;          
-
-}
-
-.menu a:hover,
-.menu a:active,
-.menu a:focus {
-  text-decoration: none;   
-  color: inherit;          
-}
   </style>
 </head>
 <body>
 
   <nav class="scroll-menu" id="menu">
     <ul>
+      <li data-slug="startseite">startseite</li>
       <li data-slug="biografie">biografie</li>
       <li data-slug="rms-revisited">rms revisited</li>
-      <li data-slug="blicke"><a href="blicke.html">blicke</a></li>
+      <li data-slug="blicke">blicke</li>
       <li data-slug="postkarten">postkarten</li>
       <li data-slug="kleinstadtnovelle">kleinstadtnovelle</li>
       <li data-slug="die-tage-in-l">die tage in l.</li>
@@ -89,11 +75,9 @@
   </nav>
 
   <script>
-    const menu  = document.getElementById('menu');
+    const menu = document.getElementById('menu');
     const items = Array.from(menu.querySelectorAll('li'));
-    const links = menu.querySelectorAll('li a');
-  
-    // highlight the snapped item
+
     menu.addEventListener('scroll', () => {
       const center = window.innerHeight / 2;
       let closest = null, dist = Infinity;
@@ -108,27 +92,13 @@
       items.forEach(li => li.classList.remove('active'));
       if (closest) closest.classList.add('active');
     });
-  
-    // intercept link-clicks so we can scroll-then-navigate
-    links.forEach(link => {
-      link.addEventListener('click', e => {
-        e.preventDefault();
-        const li = link.parentElement;
-  
-        // 1) animate the menu container so this <li> snaps to the top
-        menu.scrollTo({
-          top: li.offsetTop,
-          behavior: 'smooth'
-        });
-  
-        // 2) after the scroll finishes, go to the URL
-        setTimeout(() => {
-          window.location.href = link.href;
-        }, 350); // adjust (ms) to taste
+
+    items.forEach(li => {
+      li.addEventListener('click', () => {
+        li.scrollIntoView({ behavior: 'smooth' });
       });
     });
   </script>
-  
 
 </body>
 </html>
